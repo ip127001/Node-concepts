@@ -9,22 +9,23 @@ var person = {
 
 rl.question('who are you? > ', function (answer) {
     person.name = answer;
-
-    fs.writeFileSync(person.name + ".md", `${person.name}\n==============\n\n`);
+  
+    var stream = fs.createWriteStream('./lib/person.js');
+    
+    stream.write(`${person.name}`);
+    stream.write("============================ \n");
 
     rl.setPrompt(`what would ${person.name} say`);
     rl.prompt();
     rl.on('line', function (statement) {
-        person.statements.push(statement);
-
-        fs.appendFile(person.name + ".md", `${statement.trim()}\n`, function (err) {
-            if (err) console.log(err);
-        });
 
         if (statement.toLowerCase().trim() === 'exit') {
+            stream.close();
             rl.close();
         } else {
+            person.statements.push(statement);
             rl.setPrompt(`what else ${person.name} say? ('exit' to leave')`);
+            stream.write(`* ${statement} \n`);
             rl.prompt();
         }
     });
