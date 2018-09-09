@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dictionary</title>
+</head>
+
+<body>
+    <h1>Dictionary</h1>
+
+    <h3 id="bio"></h3>
+    <p id="fuel"></p>
+    <h3 id="oil"></h3>
+    <p id="price"></p>
+    <h3 id="sat"></h3>
+    <p id="day"></p>
+
+    <form action="/" method="POST">
+        <label for="word">word</label>
+        <input type="text" id="word" value="word" required />
+
+        <label for="meaning">meaning</label>
+        <input type="text" id="meaning" value="meaning" required />
+
+        <button onclick="sendForm()">Add item</button>
+    </form>
+
+
+    <script>
+        (function sendData() {
+            var bio = document.getElementById("bio");
+            var fuel = document.getElementById("fuel");
+
+            var oil = document.getElementById("oil");
+            var price = document.getElementById("price");
+
+            var sat = document.getElementById("sat");
+            var day = document.getElementById("day");
+
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (request.readyState === 4 && request.status === 200) {
+                    var response = JSON.parse(request.responseText);
+                    bio.innerHTML = response[0].word;
+                    fuel.innerHTML = response[0].meaning;
+                    oil.innerHTML = response[1].word;
+                    price.innerHTML = response[1].meaning;
+
+                    sat.innerHTML = response[2].word;
+                    day.innerHTML = response[2].meaning;
+
+                } else {
+                    bio.innerHTML = 'An error occurred during your request: ' + request.status + ' ' + request.statusText;
+                }
+            }
+
+            request.open("GET", "http://localhost:3000/dictionary-api", true);
+            request.send();
+        })();
+
+        function sendForm() {
+            var http = new XMLHttpRequest();
+            var params = 'word=word&meaning=meaning';
+            http.open('POST', "http://localhost:3000/dictionary-api", true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            http.onreadystatechange = function () { //Call a function when the state changes.
+                if (http.readyState == 4 && http.status == 200) {
+                    alert(http.responseText);
+                }
+            }
+            http.send(params);
+        }
+    </script>
+</body>
+
+</html>
